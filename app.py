@@ -15,6 +15,7 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client['dhreeg_agro']
 users = db['users']
 orders = db['orders']
+price = db['price']
 
 # Secret key for JWT token
 app.config['SECRET_KEY'] = 'vVGJVvnUK0nuyHnpEcTAQ8a0BoM4cUKMVkQuwi2WePoRfQxCoqSTTJtEDr0-oyqLictsAUjr3N9Re_PgyC5PqA'
@@ -132,6 +133,21 @@ def get_order(order_id):
         return jsonify(order_data), 200
     else:
         return jsonify({'message': 'Order not found'}), 404
+@app.route('/updateprice', methods=['POST'])
+def updateprice():
+    data = request.json
+    price500ml = data.get('price500ml')
+    price200ml = data.get('price200ml')
+    price1ltr = data.get('price1ltr')
+    price2ltr = data.get('price2ltr')
+    price5ltr = data.get('price5ltr')
+    price20ltr = data.get('price20ltr')
+    price.update_one({}, {'$set': {'price500ml': price500ml, 'price200ml': price200ml, 'price1ltr': price1ltr, 'price2ltr': price2ltr, 'price5ltr': price5ltr, 'price20ltr': price20ltr}})
+    return jsonify({'message': 'Price updated successfully'}), 200
+@app.route('/getprice', methods=['GET'])
+def getprice():
+    price_data = price.find_one({}, {'_id': 0})
+    return jsonify(price_data), 200
 
     
 
