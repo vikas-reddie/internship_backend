@@ -1,23 +1,32 @@
 import bcrypt
 from flask import Flask, request, jsonify
 import jwt
-from pymongo import MongoClient
+import pymongo
 from flask_cors import CORS
 import random
 import string
 import datetime
+import urllib.parse
 
 app = Flask(__name__)
 CORS(app)
 
-# MongoDB setup
-client = MongoClient('mongodb://localhost:27017/')
-db = client['dhreeg_agro']
-users = db['users']
-orders = db['orders']
-price = db['price']
 
-# Secret key for JWT token
+CONNECTION_STRING = 'mongodb+srv://user:user@dherag.nq31evb.mongodb.net/?retryWrites=true&w=majority&appName=dherag'
+
+# client = MongoClient(uri)
+# db = client['dhreeg_agro']
+# db = client.get_database('dhreeg_agro')
+# users = db['users']
+# orders = db['orders']
+# price = db['price']
+client = pymongo.MongoClient(CONNECTION_STRING)
+db = client.get_database('dhreeg_agro')
+users = pymongo.collection.Collection(db, 'users')
+orders = pymongo.collection.Collection(db, 'orders')
+price = pymongo.collection.Collection(db, 'price')
+
+
 app.config['SECRET_KEY'] = 'vVGJVvnUK0nuyHnpEcTAQ8a0BoM4cUKMVkQuwi2WePoRfQxCoqSTTJtEDr0-oyqLictsAUjr3N9Re_PgyC5PqA'
 
 def generate_order_id():
